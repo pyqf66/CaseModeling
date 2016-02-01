@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>测试建模工具</string>
   </property>
   <widget class="QListWidget" name="listWidget_sublevel">
    <property name="geometry">
