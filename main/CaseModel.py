@@ -10,37 +10,39 @@ from util.logger import logger
 from PyQt5 import QtCore
 from PyQt5 import QtSql
 from PyQt5 import QtWidgets
+from main.SublevelHelp import Ui_Form_Help
 
 from util.OutputWithTemplate import OutputWithTemplate
 import sys
+
 sys.path.append("../")
 
 
-class Ui_Form(object):
+class Ui_Form_Main(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(666, 527)
         # toplevel
         self.label_toplevel = QtWidgets.QLabel(Form)
-        self.label_toplevel.setGeometry(QtCore.QRect(40, 40, 54, 12))
+        self.label_toplevel.setGeometry(QtCore.QRect(10, 30, 61, 20))
         self.label_toplevel.setObjectName("label_toplevel")
         self.comboBox_toplevel = QtWidgets.QComboBox(Form)
-        self.comboBox_toplevel.setGeometry(QtCore.QRect(110, 40, 80, 22))
+        self.comboBox_toplevel.setGeometry(QtCore.QRect(90, 21, 81, 31))
         self.comboBox_toplevel.setObjectName("comboBox_toplevel")
         self.comboBox_handle()
         self.comboBox_toplevel_current_data = self.comboBox_toplevel.currentText()
         # sublevel
         self.label_sublevel = QtWidgets.QLabel(Form)
-        self.label_sublevel.setGeometry(QtCore.QRect(40, 150, 54, 12))
+        self.label_sublevel.setGeometry(QtCore.QRect(13, 142, 61, 20))
         self.label_sublevel.setObjectName("label_sublevel")
         self.listWidget_sublevel = QtWidgets.QListWidget(Form)
-        self.listWidget_sublevel.setGeometry(QtCore.QRect(110, 70, 201, 191))
+        self.listWidget_sublevel.setGeometry(QtCore.QRect(90, 70, 201, 191))
         self.listWidget_sublevel.setObjectName("listWidget_sublevel")
         # 默认选中第一个
         self.listWidget_sublevel_handle(self.comboBox_toplevel_current_data)
         # thirdlevel
         self.label_thirdlevel = QtWidgets.QLabel(Form)
-        self.label_thirdlevel.setGeometry(QtCore.QRect(320, 150, 31, 16))
+        self.label_thirdlevel.setGeometry(QtCore.QRect(300, 150, 41, 20))
         self.label_thirdlevel.setObjectName("label_thirdlevel")
         self.listWidget_thirdlevel = QtWidgets.QListWidget(Form)
         self.listWidget_thirdlevel.setGeometry(QtCore.QRect(350, 71, 201, 191))
@@ -50,25 +52,28 @@ class Ui_Form(object):
         self.listWidget_thirdlevel_handle()
         # casemodel
         self.label_caseModel = QtWidgets.QLabel(Form)
-        self.label_caseModel.setGeometry(QtCore.QRect(40, 390, 54, 12))
+        self.label_caseModel.setGeometry(QtCore.QRect(13, 382, 61, 20))
         self.label_caseModel.setObjectName("label_caseModel")
         self.listWidget_caseModel = QtWidgets.QListWidget(Form)
-        self.listWidget_caseModel.setGeometry(QtCore.QRect(110, 300, 261, 192))
+        self.listWidget_caseModel.setGeometry(QtCore.QRect(90, 300, 261, 192))
         self.listWidget_caseModel.setObjectName("listWidget_caseModel")
         self.listWidget_casemodel_handle()
         # button
         self.pushButton_deleteSelection = QtWidgets.QPushButton(Form)
-        self.pushButton_deleteSelection.setGeometry(QtCore.QRect(380, 470, 75, 23))
+        self.pushButton_deleteSelection.setGeometry(QtCore.QRect(380, 462, 81, 31))
         self.pushButton_deleteSelection.setObjectName("pushButton_deleteSelection")
         self.pushButton_toExcel = QtWidgets.QPushButton(Form)
-        self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 430, 75, 23))
+        self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 420, 91, 31))
         self.pushButton_toExcel.setObjectName("pushButton_toExcel")
         self.pushButton_resetAll = QtWidgets.QPushButton(Form)
-        self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 470, 75, 23))
+        self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 460, 91, 31))
         self.pushButton_resetAll.setObjectName("pushButton_resetAll")
         self.pushButton_addToCaseModel = QtWidgets.QPushButton(Form)
-        self.pushButton_addToCaseModel.setGeometry(QtCore.QRect(560, 240, 75, 23))
+        self.pushButton_addToCaseModel.setGeometry(QtCore.QRect(560, 232, 81, 31))
         self.pushButton_addToCaseModel.setObjectName("pushButton_addToCaseModel")
+        self.pushButton_sublevel_help = QtWidgets.QPushButton(Form)
+        self.pushButton_sublevel_help.setGeometry(QtCore.QRect(560, 380, 91, 31))
+        self.pushButton_sublevel_help.setObjectName("pushButton_sublevel_help")
         self.retranslateUi(Form)
         # 下拉框变更事件
         self.comboBox_toplevel.currentTextChanged.connect(self.listWidget_sublevel_handle)
@@ -79,11 +84,12 @@ class Ui_Form(object):
         self.pushButton_addToCaseModel.clicked.connect(self.add_to_casemodel)
         self.pushButton_deleteSelection.clicked.connect(self.delete_selection)
         self.pushButton_toExcel.clicked.connect(self.to_excel)
+        self.pushButton_sublevel_help.clicked.connect(self.sublevel_help)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "测试建模工具"))
         self.pushButton_deleteSelection.setText(_translate("Form", "删除选定"))
         self.label_caseModel.setText(_translate("Form", "已设定项"))
         self.label_thirdlevel.setText(_translate("Form", "选项"))
@@ -92,6 +98,7 @@ class Ui_Form(object):
         self.label_toplevel.setText(_translate("Form", "顶层元素"))
         self.pushButton_resetAll.setText(_translate("Form", "重新设定"))
         self.pushButton_addToCaseModel.setText(_translate("Form", "添加"))
+        self.pushButton_sublevel_help.setText(_translate("Form", "次层元素说明"))
 
     # 下拉框加载数据
     def comboBox_handle(self):
@@ -177,19 +184,28 @@ class Ui_Form(object):
 
     def to_excel(self):
         try:
-            TEMPLATE_FILE="../templates/测试建模模板.xlsx"
-            SHEET_COUNT=4
-            toplevel_id=DBManager().query("casemodel","toplevel_id")
-            sublevel_id=DBManager().query("casemodel","sublevel_id")
-            thirdlevel_element=DBManager().query("casemodel","thirdlevel_element")
-            data_list=list()
+            TEMPLATE_FILE = "../templates/测试建模模板.xlsx"
+            SHEET_COUNT = 4
+            toplevel_id = DBManager().query("casemodel", "toplevel_id")
+            sublevel_id = DBManager().query("casemodel", "sublevel_id")
+            thirdlevel_element = DBManager().query("casemodel", "thirdlevel_element")
+            data_list = list()
             data_list.append(toplevel_id)
             data_list.append(sublevel_id)
             data_list.append(thirdlevel_element)
             logger.debug(data_list)
-            OutputWithTemplate().output_with_excel(TEMPLATE_FILE,SHEET_COUNT,data_list)
+            OutputWithTemplate().output_with_excel(TEMPLATE_FILE, SHEET_COUNT, data_list)
         except:
             logger.exception("发现错误:")
+
+    def sublevel_help(self):
+        try:
+            self.help_widget=QtWidgets.QWidget()
+            self.window_help=Ui_Form_Help()
+            self.window_help.setupUi(self.help_widget)
+        except:
+            logger.exception("发现错误:")
+
 
 
 class DBManager(object):
