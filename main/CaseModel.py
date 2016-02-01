@@ -158,6 +158,7 @@ class Ui_Form_Main(object):
             condition_List.append("sublevel_element='" + i_sublevel.text() + "'")
             sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)[0]
 
+        # 使用字典记录即将添加的值，并调用公用方法添加数据
         for i_thirdlevel in items_thirdlevel:
             data_dict = dict()
             condition_List.clear()
@@ -268,7 +269,7 @@ class DBManager(object):
             result_list.append(self.query.record(i).value(value))
         return result_list
 
-    # 插入数据
+    # 插入数据，数据索引从0开始
     def insert_data(self, table, data_dict):
         self.insert = QtSql.QSqlTableModel()
         self.insert.setTable(table)

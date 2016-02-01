@@ -12,7 +12,7 @@ class OutputWithTemplate(object):
         :param template_file: 模板文件路径
         :param sheet_count: 模板文件容sheet的个数，比如5个sheet页通过这个参数可以指定就用3个
         :param data_list: 数据list，其中包含sheet页list，表头list，数据list
-        本方法中均使用list进行数据操作
+        本方法中均使用list进行数据操作，由于模板中第一行为标题，故插入数据的行数索引从1开始
         '''
         try:
             data = xlrd.open_workbook(template_file)
@@ -54,7 +54,9 @@ class OutputWithTemplate(object):
                     output_file_sheet_list[j_sheet_num].write(0, j_sheet_row_index,
                                                               template_data_list[j_sheet_num][j_sheet_row_index], style)
 
+            # 数据格式为{"sheet页数":{"列数":[当前添加的数据1,当前添加的数据2]}}
             filter_dict = dict()
+            # 为列数dict
             data_col_num_dict = dict()
             logger.debug("++++++++++++++++++++++++++++++")
             logger.debug(data_list)
@@ -67,14 +69,21 @@ class OutputWithTemplate(object):
                 data_col_num = int(data_list[1][data_num]) - 1
                 logger.debug("===================================")
                 logger.debug(data_col_num)
+                # 判断当前sheet页数是否在filter_dict中，即当前sheet是否曾经出现过
                 if str(data_sheet_num) not in filter_dict:
+                    # 当前sheet页数不存在filter_dict,增加对应列数的数据list
                     data_col_num_dict[str(data_col_num)] = list()
+                    # 由于sheet页数第一次出现，故数据也一定第一次出现，所以之列列表中添加值
                     data_col_num_dict[str(data_col_num)].append(data_col_num)
+                    # 列数字典放到sheet页数key中
                     filter_dict[str(data_sheet_num)] = data_col_num_dict
                 else:
+                    # 当前sheet页数存在filter_dict中，判断当前列数是否在列数字典中，即当前列数是否出现过
                     if str(data_col_num) not in filter_dict[str(data_sheet_num)]:
+                        # 当前列数未出现过。向列数字典列表插数据，但插入数据的当前行数为初始值，即1
                         filter_dict[str(data_sheet_num)][str(data_col_num)].append(data_col_num)
                     else:
+                        # 当前列数出现过。向列数字典列表插数据，插入数据的当前行数为总出现的次数
                         filter_dict[str(data_sheet_num)][str(data_col_num)].append(data_col_num)
                         data_row_num = len(data_col_num_dict[str(data_col_num)])
                 logger.debug(filter_dict)
