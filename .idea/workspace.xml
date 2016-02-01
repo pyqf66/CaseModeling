@@ -191,6 +191,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CaseModeling" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CaseModeling" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -203,15 +217,15 @@
     <property name="js-jscs-nodeInterpreter" value="D:\Program Files\nodejs\node.exe" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\workpycharmspace\CaseModeling" />
-      <recent name="D:\workpycharmspace\CaseModeling\CaseModeling" />
-      <recent name="D:\workpycharmspace\CaseModeling\main" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\workpycharmspace\CaseModeling" />
       <recent name="D:\workpycharmspace\CaseModeling\main" />
       <recent name="D:\workpycharmspace\CaseModeling\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\workpycharmspace\CaseModeling" />
+      <recent name="D:\workpycharmspace\CaseModeling\CaseModeling" />
+      <recent name="D:\workpycharmspace\CaseModeling\main" />
     </key>
   </component>
   <component name="RunManager" selected="Python.run">
