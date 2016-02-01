@@ -100,12 +100,13 @@ class Ui_Form_Main(object):
         self.pushButton_addToCaseModel.setText(_translate("Form", "添加"))
         self.pushButton_sublevel_help.setText(_translate("Form", "次层元素说明"))
 
-    # 下拉框加载数据
+    # 顶层元素下拉框加载数据方法
     def comboBox_handle(self):
         comboBox_data = DBManager().query("toplevel", "toplevel_element")
         for i in range(len(comboBox_data)):
             self.comboBox_toplevel.addItem(comboBox_data[i])
 
+    # 次层元素加载数据方法
     def listWidget_sublevel_handle(self, comboBox_current_data):
         self.listWidget_sublevel.clear()
         condition_List = list()
@@ -118,6 +119,7 @@ class Ui_Form_Main(object):
             self.listWidget_sublevel.addItem(i)
         self.listWidget_sublevel.setCurrentRow(0)
 
+    # 三层元素加载数据方法
     def listWidget_thirdlevel_handle(self):
         # 获取列表中选中的值
         self.listWidget_thirdlevel.clear()
@@ -132,6 +134,7 @@ class Ui_Form_Main(object):
         for i in sublevel_element:
             self.listWidget_thirdlevel.addItem(i)
 
+    # 生成的建模数据加载方法
     def listWidget_casemodel_handle(self):
         toplevel_element_list = DBManager().query("casemodel", "toplevel_element")
         sublevel_element_list = DBManager().query("casemodel", "sublevel_element")
@@ -143,28 +146,39 @@ class Ui_Form_Main(object):
         for k in casemodel_list:
             self.listWidget_caseModel.addItem(k)
 
+    # 根据操作生成模型数据方法
     def add_to_casemodel(self):
         self.listWidget_caseModel.clear()
-        items = self.listWidget_thirdlevel.selectedItems()
+        toplevel_element = self.comboBox_toplevel.currentText()
+        items_sublevel = self.listWidget_sublevel.selectedItems()
+        items_thirdlevel = self.listWidget_thirdlevel.selectedItems()
         condition_List = list()
-        for i in items:
+        for i_sublevel in items_sublevel:
+            sublevel_element = i_sublevel.text()
+            condition_List.append("sublevel_element='" + i_sublevel.text() + "'")
+            sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)[0]
+
+        for i_thirdlevel in items_thirdlevel:
             data_dict = dict()
-            condition_List.append("thirdlevel_element='" + i.text() + "'")
-            data_dict["thirdlevel_element"] = i.text()
-            data_dict["thirdlevel_id"] = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
-            sublevel_id = DBManager().query("thirdlevel", "sublevel_id", condition_List)[0]
-            data_dict["sublevel_id"] = sublevel_id
             condition_List.clear()
             condition_List.append("sublevel_id='" + sublevel_id + "'")
-            data_dict["sublevel_element"] = DBManager().query("sublevel", "sublevel_element", condition_List)[0]
-            toplevel_id = DBManager().query("sublevel", "toplevel_id", condition_List)[0]
-            data_dict["toplevel_id"] = toplevel_id
+            logger.debug(sublevel_id)
+            condition_List.append("thirdlevel_element='" + i_thirdlevel.text() + "'")
+            logger.debug(condition_List)
+            data_dict["thirdlevel_id"] = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
+            data_dict["thirdlevel_element"] = i_thirdlevel.text()
+            data_dict["sublevel_id"] = sublevel_id
+            data_dict["sublevel_element"] = sublevel_element
             condition_List.clear()
-            condition_List.append("toplevel_id='" + toplevel_id + "'")
-            data_dict["toplevel_element"] = DBManager().query("toplevel", "toplevel_element", condition_List)[0]
+            condition_List.append("toplevel_element='" + toplevel_element + "'")
+            toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)[0]
+            data_dict["toplevel_id"] = toplevel_id
+            data_dict["toplevel_element"] = toplevel_element
+            logger.debug(data_dict)
             DBManager().insert_data("casemodel", data_dict)
         self.listWidget_casemodel_handle()
 
+    # 清除所有数据方法
     def clear_all(self):
         listWidget_count = self.listWidget_caseModel.count()
         while (listWidget_count != 0):
@@ -172,6 +186,7 @@ class Ui_Form_Main(object):
             listWidget_count = listWidget_count - 1
         self.listWidget_caseModel.clear()
 
+    # 删除所选项方法
     def delete_selection(self):
         try:
             delete_data = self.listWidget_caseModel.currentItem().text()
@@ -182,30 +197,51 @@ class Ui_Form_Main(object):
         except:
             logger.exception("发现错误：")
 
+    # 生成excel方法
     def to_excel(self):
         try:
+            # toplevel_id在sublevel表中个数索引从1开始
+            toplevel_count_list = list()
+            condition_list = list()
+            condition_list.append("")
+            for i in range(4):
+                i = i + 1
+                condition_list.clear()
+                condition_list.append("toplevel_id='" + str(i) + "'")
+                toplevel_count_list.append(len(DBManager().query("sublevel", "sublevel_elemnt", condition_list)))
             TEMPLATE_FILE = "../templates/测试建模模板.xlsx"
             SHEET_COUNT = 4
+            real_index_list = list()
             toplevel_id = DBManager().query("casemodel", "toplevel_id")
+            # sublevel_id数据索引从1开始
             sublevel_id = DBManager().query("casemodel", "sublevel_id")
+            for j in sublevel_id:
+                real_index = int(j)
+                toplevel_count_index = 0
+                # 由于sublevel_id数据索引和sublevel表中toplevel_id个数索引均从1开始
+                # 故两者之差大于0时认为当前sublevel_element为下一个顶级元素的次级元素，需要做差取真实表格索引
+                while ((real_index - toplevel_count_list[toplevel_count_index]) > 0):
+                    real_index = real_index - toplevel_count_list[toplevel_count_index]
+                    toplevel_count_index = toplevel_count_index + 1
+                real_index_list.append(real_index)
             thirdlevel_element = DBManager().query("casemodel", "thirdlevel_element")
             data_list = list()
             data_list.append(toplevel_id)
-            data_list.append(sublevel_id)
+            data_list.append(real_index_list)
             data_list.append(thirdlevel_element)
             logger.debug(data_list)
             OutputWithTemplate().output_with_excel(TEMPLATE_FILE, SHEET_COUNT, data_list)
         except:
             logger.exception("发现错误:")
 
+    # 打开次层元素帮助方法
     def sublevel_help(self):
         try:
-            self.help_widget=QtWidgets.QWidget()
-            self.window_help=Ui_Form_Help()
+            self.help_widget = QtWidgets.QWidget()
+            self.window_help = Ui_Form_Help()
             self.window_help.setupUi(self.help_widget)
         except:
             logger.exception("发现错误:")
-
 
 
 class DBManager(object):
@@ -223,8 +259,8 @@ class DBManager(object):
         self.query = QtSql.QSqlTableModel()
         self.query.setTable(table)
         if condition_list is not None:
-            for i in condition_list:
-                self.query.setFilter(i)
+            condition = " and ".join(condition_list)
+            self.query.setFilter(condition)
         self.query.select()
         result_list = list()
         row_count = self.query.rowCount()
