@@ -56,8 +56,6 @@ class OutputWithTemplate(object):
 
             # 数据格式为{"sheet页数":{"列数":[当前添加的数据1,当前添加的数据2]}}
             filter_dict = dict()
-            # 为列数dict
-            data_col_num_dict = dict()
             logger.debug("++++++++++++++++++++++++++++++")
             logger.debug(data_list)
             # 以追加方式添加数据
