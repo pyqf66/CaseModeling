@@ -21,13 +21,13 @@ sys.path.append("../")
 class Ui_Form_Main(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(666, 589)
+        Form.resize(679, 589)
         # module
         self.label_module = QtWidgets.QLabel(Form)
         self.label_module.setGeometry(QtCore.QRect(10, 29, 61, 20))
         self.label_module.setObjectName("label_module")
         self.comboBox_module = QtWidgets.QComboBox(Form)
-        self.comboBox_module.setGeometry(QtCore.QRect(90, 20, 81, 31))
+        self.comboBox_module.setGeometry(QtCore.QRect(90, 20, 91, 31))
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
@@ -36,7 +36,7 @@ class Ui_Form_Main(object):
         self.label_toplevel.setGeometry(QtCore.QRect(10, 89, 61, 20))
         self.label_toplevel.setObjectName("label_toplevel")
         self.comboBox_toplevel = QtWidgets.QComboBox(Form)
-        self.comboBox_toplevel.setGeometry(QtCore.QRect(90, 80, 81, 31))
+        self.comboBox_toplevel.setGeometry(QtCore.QRect(90, 80, 91, 31))
         self.comboBox_toplevel.setObjectName("comboBox_toplevel")
         self.comboBox_toplevel_handle()
         self.comboBox_toplevel_current_data = self.comboBox_toplevel.currentText()
@@ -72,16 +72,16 @@ class Ui_Form_Main(object):
         self.pushButton_deleteSelection.setGeometry(QtCore.QRect(380, 530, 81, 31))
         self.pushButton_deleteSelection.setObjectName("pushButton_deleteSelection")
         self.pushButton_toExcel = QtWidgets.QPushButton(Form)
-        self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 488, 91, 31))
+        self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 488, 101, 31))
         self.pushButton_toExcel.setObjectName("pushButton_toExcel")
         self.pushButton_resetAll = QtWidgets.QPushButton(Form)
-        self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 528, 91, 31))
+        self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 528, 101, 31))
         self.pushButton_resetAll.setObjectName("pushButton_resetAll")
         self.pushButton_addToCaseModel = QtWidgets.QPushButton(Form)
         self.pushButton_addToCaseModel.setGeometry(QtCore.QRect(560, 300, 81, 31))
         self.pushButton_addToCaseModel.setObjectName("pushButton_addToCaseModel")
         self.pushButton_sublevel_help = QtWidgets.QPushButton(Form)
-        self.pushButton_sublevel_help.setGeometry(QtCore.QRect(560, 448, 91, 31))
+        self.pushButton_sublevel_help.setGeometry(QtCore.QRect(560, 448, 101, 31))
         self.pushButton_sublevel_help.setObjectName("pushButton_sublevel_help")
         self.retranslateUi(Form)
         # 下拉框变更事件
@@ -161,7 +161,7 @@ class Ui_Form_Main(object):
             condition_List.append("sublevel_element='" + row_data + "'")
             sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)
             condition_List.clear()
-            condition_List.append("sublevel_id='" + sublevel_id[0]+"'")
+            condition_List.append("sublevel_id='" + sublevel_id[0] + "'")
             condition_List.append("module_id='" + str(module_id) + "'")
             sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
             for i in sublevel_element:
@@ -222,36 +222,62 @@ class Ui_Form_Main(object):
                 condition_List.append("module_id='" + str(module_id) + "'")
                 condition_List.append("thirdlevel_element='" + i_thirdlevel.text() + "'")
                 logger.debug(condition_List)
-                data_dict["thirdlevel_id"] = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
-                data_dict["thirdlevel_element"] = i_thirdlevel.text()
-                data_dict["sublevel_id"] = sublevel_id
-                data_dict["sublevel_element"] = sublevel_element
+                thirdlevel_id = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
                 condition_List.clear()
-                condition_List.append("toplevel_element='" + toplevel_element + "'")
-                toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)[0]
-                data_dict["toplevel_id"] = toplevel_id
-                data_dict["toplevel_element"] = toplevel_element
-                data_dict["module_id"] = module_id
-                logger.debug(data_dict)
-                DBManager().insert_data("casemodel", data_dict)
+                condition_List.append("module_id='" + str(module_id) + "'")
+                condition_List.append("thirdlevel_element='" + i_thirdlevel.text() + "'")
+                casemodel_thirdlevel_id = DBManager().query("casemodel", "thirdlevel_id", condition_List)
+                if thirdlevel_id not in casemodel_thirdlevel_id:
+                    data_dict["thirdlevel_id"] = thirdlevel_id
+                    thirdlevel_element = i_thirdlevel.text()
+                    data_dict["thirdlevel_element"] = thirdlevel_element
+                    data_dict["sublevel_id"] = sublevel_id
+                    data_dict["sublevel_element"] = sublevel_element
+                    condition_List.clear()
+                    condition_List.append("toplevel_element='" + toplevel_element + "'")
+                    toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)[0]
+                    data_dict["toplevel_id"] = toplevel_id
+                    data_dict["toplevel_element"] = toplevel_element
+                    data_dict["module_id"] = module_id
+                    logger.debug(data_dict)
+                    DBManager().insert_data("casemodel", data_dict)
             self.listWidget_casemodel_handle()
         except:
             logger.exception("发现错误：")
 
     # 清除所有数据方法
     def clear_all(self):
-        listWidget_count = self.listWidget_caseModel.count()
-        while (listWidget_count != 0):
-            DBManager().clear_all("casemodel", 0)
-            listWidget_count = listWidget_count - 1
-        self.listWidget_caseModel.clear()
+        try:
+            listWidget_count = self.listWidget_caseModel.count()
+            module = self.comboBox_module.currentText()
+            condition_list = list()
+            condition_list.clear()
+            condition_list.append("module='"+module+"'")
+            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.clear()
+            condition_list.append("module_id='" + module_id + "'")
+            while (listWidget_count != 0):
+                DBManager().delete("casemodel", condition_list)
+                listWidget_count = listWidget_count - 1
+            self.listWidget_caseModel.clear()
+        except:
+            logger.exception("发现错误：")
 
     # 删除所选项方法
     def delete_selection(self):
         try:
+            condition_list=list()
+            module=self.comboBox_module.currentText()
+            condition_list.clear()
+            condition_list.append("module='"+module+"'")
+            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.clear()
             delete_data = self.listWidget_caseModel.currentItem().text()
             thirdlevel_data = "thirdlevel_element='" + delete_data.split(":")[1] + "'"
-            DBManager().delete("casemodel", thirdlevel_data)
+            condition_list.append(thirdlevel_data)
+            condition_list.append("module_id='"+str(module_id)+"'")
+            logger.debug(condition_list)
+            DBManager().delete("casemodel", condition_list)
             self.listWidget_casemodel_handle()
         except:
             logger.exception("发现错误：")
@@ -262,12 +288,12 @@ class Ui_Form_Main(object):
             # toplevel_id在sublevel表中个数索引从1开始
             toplevel_count_list = list()
             condition_list = list()
-            module=self.comboBox_module.currentText()
+            module = self.comboBox_module.currentText()
             condition_list.clear()
             condition_list.append("module='" + module + "'")
             module_id = DBManager().query("modules", "module_id", condition_list)[0]
-            condition_list.clear()
-            condition_list.append("")
+            logger.debug(module_id)
+            logger.debug(condition_list)
             for i in range(4):
                 i = i + 1
                 condition_list.clear()
@@ -276,9 +302,11 @@ class Ui_Form_Main(object):
             TEMPLATE_FILE = "../templates/测试建模模板.xlsx"
             SHEET_COUNT = 4
             real_index_list = list()
-            toplevel_id = DBManager().query("casemodel", "toplevel_id")
+            condition_list.clear()
+            condition_list.append("module_id='" + str(module_id) + "'")
+            toplevel_id = DBManager().query("casemodel", "toplevel_id", condition_list)
             # sublevel_id数据索引从1开始
-            sublevel_id = DBManager().query("casemodel", "sublevel_id")
+            sublevel_id = DBManager().query("casemodel", "sublevel_id", condition_list)
             for j in sublevel_id:
                 real_index = int(j)
                 toplevel_count_index = 0
@@ -288,7 +316,7 @@ class Ui_Form_Main(object):
                     real_index = real_index - toplevel_count_list[toplevel_count_index]
                     toplevel_count_index = toplevel_count_index + 1
                 real_index_list.append(real_index)
-            thirdlevel_element = DBManager().query("casemodel", "thirdlevel_element")
+            thirdlevel_element = DBManager().query("casemodel", "thirdlevel_element", condition_list)
             data_list = list()
             data_list.append(toplevel_id)
             data_list.append(real_index_list)
@@ -344,23 +372,29 @@ class DBManager(object):
         self.insert.insertRecord(row_count, model)
         self.insert.submitAll()
 
-    # 删除所有数据
-    def clear_all(self, table, start_row):
-        self.clearer = QtSql.QSqlTableModel()
-        self.clearer.setTable(table)
-        # 查询出数据后才能成功执行后续的命令
-        self.clearer.select()
-        try:
-            self.clearer.removeRows(0, 1)
-            self.clearer.submitAll()
-        except:
-            logger.exception("发现错误")
+    # # 删除所有数据
+    # def clear_all(self, table, condition_list=None):
+    #     self.clearer = QtSql.QSqlTableModel()
+    #     self.clearer.setTable(table)
+    #     if condition_list is not None:
+    #         condition = " and ".join(condition_list)
+    #         self.clearer.setFilter(condition)
+    #     # 查询出数据后才能成功执行后续的命令
+    #     self.clearer.select()
+    #     try:
+    #         self.clearer.removeRows(0, 1)
+    #         self.clearer.submitAll()
+    #     except:
+    #         logger.exception("发现错误")
 
     # 删除数据
-    def delete(self, table, data):
+    def delete(self, table, condition_list=None):
         self.delete = QtSql.QSqlTableModel()
         self.delete.setTable(table)
-        self.delete.setFilter(data)
+        if condition_list is not None:
+            condition = " and ".join(condition_list)
+            self.delete.setFilter(condition)
         self.delete.select()
         self.delete.removeRows(0, 1)
         self.delete.submitAll()
+
