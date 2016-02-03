@@ -85,6 +85,8 @@ class Ui_Form_Main(object):
         self.pushButton_sublevel_help.setObjectName("pushButton_sublevel_help")
         self.retranslateUi(Form)
         # 下拉框变更事件
+        self.comboBox_module.currentTextChanged.connect(self.comboBox_module_change_handle)
+        # 下拉框变更事件
         self.comboBox_toplevel.currentTextChanged.connect(self.listWidget_sublevel_handle)
         # 次层元素选择与选项联动事件
         self.listWidget_sublevel.itemSelectionChanged.connect(self.listWidget_thirdlevel_handle)
@@ -117,6 +119,11 @@ class Ui_Form_Main(object):
             self.comboBox_module.addItem(comboBox_data[i])
 
     # 顶层元素下拉框加载数据方法
+    def comboBox_module_change_handle(self):
+        self.listWidget_thirdlevel_handle()
+        self.listWidget_casemodel_handle()
+
+    # 顶层元素下拉框加载数据方法
     def comboBox_toplevel_handle(self):
         comboBox_data = DBManager().query("toplevel", "toplevel_element")
         for i in range(len(comboBox_data)):
@@ -124,77 +131,112 @@ class Ui_Form_Main(object):
 
     # 次层元素加载数据方法
     def listWidget_sublevel_handle(self, comboBox_current_data):
-        self.listWidget_sublevel.clear()
-        condition_List = list()
-        module_id=DBManager().query("modules",)
-        condition_List.append("toplevel_element='" + comboBox_current_data + "'")
-        toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)
-        condition_List.clear()
-        condition_List.append("toplevel_id=" + toplevel_id[0])
-        sublevel_element = DBManager().query("sublevel", "sublevel_element", condition_List)
-        for i in sublevel_element:
-            self.listWidget_sublevel.addItem(i)
-        self.listWidget_sublevel.setCurrentRow(0)
+        try:
+            self.listWidget_sublevel.clear()
+            condition_List = list()
+            condition_List.append("toplevel_element='" + comboBox_current_data + "'")
+            toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)
+            condition_List.clear()
+            condition_List.append("toplevel_id=" + toplevel_id[0])
+            sublevel_element = DBManager().query("sublevel", "sublevel_element", condition_List)
+            for i in sublevel_element:
+                self.listWidget_sublevel.addItem(i)
+            self.listWidget_sublevel.setCurrentRow(0)
+        except:
+            logger.exception("发现错误：")
 
     # 三层元素加载数据方法
     def listWidget_thirdlevel_handle(self):
-        # 获取列表中选中的值
-        self.listWidget_thirdlevel.clear()
-        thirdlevel_widget = self.listWidget_sublevel.currentItem()
-        row_data = thirdlevel_widget.text()
-        condition_List = list()
-        condition_List.append("sublevel_element='" + row_data + "'")
-        sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)
-        condition_List.clear()
-        condition_List.append("sublevel_id=" + sublevel_id[0])
-        sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
-        for i in sublevel_element:
-            self.listWidget_thirdlevel.addItem(i)
+        try:
+            # 获取列表中选中的值
+            self.listWidget_thirdlevel.clear()
+            condition_List = list()
+            module = self.comboBox_module.currentText()
+            condition_List.clear()
+            condition_List.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_List)[0]
+            thirdlevel_widget = self.listWidget_sublevel.currentItem()
+            row_data = thirdlevel_widget.text()
+            condition_List.clear()
+            condition_List.append("sublevel_element='" + row_data + "'")
+            sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)
+            condition_List.clear()
+            condition_List.append("sublevel_id='" + sublevel_id[0]+"'")
+            condition_List.append("module_id='" + str(module_id) + "'")
+            sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
+            for i in sublevel_element:
+                self.listWidget_thirdlevel.addItem(i)
+        except:
+            logger.exception("发现错误：")
 
     # 生成的建模数据加载方法
     def listWidget_casemodel_handle(self):
-        toplevel_element_list = DBManager().query("casemodel", "toplevel_element")
-        sublevel_element_list = DBManager().query("casemodel", "sublevel_element")
-        thirdlevel_element_list = DBManager().query("casemodel", "thirdlevel_element")
-        casemodel_list = list()
-        for j in range(len(toplevel_element_list)):
-            casemodel_list.append(
-                toplevel_element_list[j] + "-" + sublevel_element_list[j] + ":" + thirdlevel_element_list[j])
-        for k in casemodel_list:
-            self.listWidget_caseModel.addItem(k)
+        try:
+            self.listWidget_caseModel.clear()
+            condition_List = list()
+            module = self.comboBox_module.currentText()
+            condition_List.clear()
+            condition_List.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_List)[0]
+            condition_List.clear()
+            condition_List.append("module_id='" + str(module_id) + "'")
+            logger.debug("=====================================================================")
+            logger.debug(condition_List)
+            toplevel_element_list = DBManager().query("casemodel", "toplevel_element", condition_List)
+            logger.debug(toplevel_element_list)
+            sublevel_element_list = DBManager().query("casemodel", "sublevel_element", condition_List)
+            thirdlevel_element_list = DBManager().query("casemodel", "thirdlevel_element", condition_List)
+            casemodel_list = list()
+            for j in range(len(toplevel_element_list)):
+                casemodel_list.append(
+                    toplevel_element_list[j] + "-" + sublevel_element_list[j] + ":" + thirdlevel_element_list[j])
+            logger.debug(casemodel_list)
+            for k in casemodel_list:
+                self.listWidget_caseModel.addItem(k)
+        except:
+            logger.exception("发现错误：")
 
     # 根据操作生成模型数据方法
     def add_to_casemodel(self):
-        self.listWidget_caseModel.clear()
-        toplevel_element = self.comboBox_toplevel.currentText()
-        items_sublevel = self.listWidget_sublevel.selectedItems()
-        items_thirdlevel = self.listWidget_thirdlevel.selectedItems()
-        condition_List = list()
-        for i_sublevel in items_sublevel:
-            sublevel_element = i_sublevel.text()
-            condition_List.append("sublevel_element='" + i_sublevel.text() + "'")
-            sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)[0]
+        try:
+            module = self.comboBox_module.currentText()
+            condition_List = list()
+            condition_List.clear()
+            condition_List.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_List)[0]
+            toplevel_element = self.comboBox_toplevel.currentText()
+            items_sublevel = self.listWidget_sublevel.selectedItems()
+            items_thirdlevel = self.listWidget_thirdlevel.selectedItems()
+            for i_sublevel in items_sublevel:
+                sublevel_element = i_sublevel.text()
+                condition_List.clear()
+                condition_List.append("sublevel_element='" + i_sublevel.text() + "'")
+                sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)[0]
 
-        # 使用字典记录即将添加的值，并调用公用方法添加数据
-        for i_thirdlevel in items_thirdlevel:
-            data_dict = dict()
-            condition_List.clear()
-            condition_List.append("sublevel_id='" + sublevel_id + "'")
-            logger.debug(sublevel_id)
-            condition_List.append("thirdlevel_element='" + i_thirdlevel.text() + "'")
-            logger.debug(condition_List)
-            data_dict["thirdlevel_id"] = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
-            data_dict["thirdlevel_element"] = i_thirdlevel.text()
-            data_dict["sublevel_id"] = sublevel_id
-            data_dict["sublevel_element"] = sublevel_element
-            condition_List.clear()
-            condition_List.append("toplevel_element='" + toplevel_element + "'")
-            toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)[0]
-            data_dict["toplevel_id"] = toplevel_id
-            data_dict["toplevel_element"] = toplevel_element
-            logger.debug(data_dict)
-            DBManager().insert_data("casemodel", data_dict)
-        self.listWidget_casemodel_handle()
+            # 使用字典记录即将添加的值，并调用公用方法添加数据
+            for i_thirdlevel in items_thirdlevel:
+                data_dict = dict()
+                condition_List.clear()
+                condition_List.append("sublevel_id='" + sublevel_id + "'")
+                logger.debug(sublevel_id)
+                condition_List.append("module_id='" + str(module_id) + "'")
+                condition_List.append("thirdlevel_element='" + i_thirdlevel.text() + "'")
+                logger.debug(condition_List)
+                data_dict["thirdlevel_id"] = DBManager().query("thirdlevel", "thirdlevel_id", condition_List)[0]
+                data_dict["thirdlevel_element"] = i_thirdlevel.text()
+                data_dict["sublevel_id"] = sublevel_id
+                data_dict["sublevel_element"] = sublevel_element
+                condition_List.clear()
+                condition_List.append("toplevel_element='" + toplevel_element + "'")
+                toplevel_id = DBManager().query("toplevel", "toplevel_id", condition_List)[0]
+                data_dict["toplevel_id"] = toplevel_id
+                data_dict["toplevel_element"] = toplevel_element
+                data_dict["module_id"] = module_id
+                logger.debug(data_dict)
+                DBManager().insert_data("casemodel", data_dict)
+            self.listWidget_casemodel_handle()
+        except:
+            logger.exception("发现错误：")
 
     # 清除所有数据方法
     def clear_all(self):
@@ -210,7 +252,6 @@ class Ui_Form_Main(object):
             delete_data = self.listWidget_caseModel.currentItem().text()
             thirdlevel_data = "thirdlevel_element='" + delete_data.split(":")[1] + "'"
             DBManager().delete("casemodel", thirdlevel_data)
-            self.listWidget_caseModel.clear()
             self.listWidget_casemodel_handle()
         except:
             logger.exception("发现错误：")
@@ -221,6 +262,11 @@ class Ui_Form_Main(object):
             # toplevel_id在sublevel表中个数索引从1开始
             toplevel_count_list = list()
             condition_list = list()
+            module=self.comboBox_module.currentText()
+            condition_list.clear()
+            condition_list.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_list)[0]
+            condition_list.clear()
             condition_list.append("")
             for i in range(4):
                 i = i + 1
@@ -318,4 +364,3 @@ class DBManager(object):
         self.delete.select()
         self.delete.removeRows(0, 1)
         self.delete.submitAll()
-
