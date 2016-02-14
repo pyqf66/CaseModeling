@@ -187,36 +187,41 @@ class Ui_Form_Main(object):
         except:
             logger.exception("发现错误：")
 
-    #
+    # 添加第三层元素选项
     def add_thirdlevel(self):
         try:
             data_dict = dict()
-            condition_list=list()
-            module=self.comboBox_module.currentText()
+            condition_list = list()
+            module = self.comboBox_module.currentText()
             condition_list.clear()
-            condition_list.append("module='"+module+"'")
-            module_id=DBManager().query("modules","module_id",condition_list)[0]
-            thirdlevel_element=self.textEdit_thirdlevel.toPlainText()
-            items_sublevel = self.listWidget_sublevel.selectedItems()
-            for i_sublevel in items_sublevel:
-                sublevel_element = i_sublevel.text()
+            condition_list.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_list)[0]
+            thirdlevel_element = self.textEdit_thirdlevel.toPlainText()
+            # 由于casemodel界面展示时包含“:”和“-”，所以在处理包含这两个符号的选项时会出错，这个弹提示不允许这个的数据输入
+            if ":" in thirdlevel_element or "：" in thirdlevel_element or "-" in thirdlevel_element:
+                msg_box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "不允许输入冒号或横线！")
+                msg_box.exec_()
+            else:
+                items_sublevel = self.listWidget_sublevel.selectedItems()
+                for i_sublevel in items_sublevel:
+                    sublevel_element = i_sublevel.text()
+                    condition_list.clear()
+                    condition_list.append("sublevel_element='" + i_sublevel.text() + "'")
+                    sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_list)[0]
                 condition_list.clear()
-                condition_list.append("sublevel_element='" + i_sublevel.text() + "'")
-                sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_list)[0]
-            condition_list.clear()
-            condition_list.append("module_id='"+module_id+"'")
-            module_id_thirdlevel=DBManager().query("thirdlevel","module_id",condition_list)
-            thirdlevel_id=str(len(module_id_thirdlevel)+1)
-            logger.debug(thirdlevel_id)
-            condition_list.clear()
-            if thirdlevel_element is not "":
-                data_dict["thirdlevel_element"]=thirdlevel_element
-            data_dict["sublevel_id"]=sublevel_id
-            data_dict["module_id"]=module_id
-            data_dict["thirdlevel_id"]=thirdlevel_id
-            DBManager().insert_data("thirdlevel",data_dict)
-            self.textEdit_thirdlevel.clear()
-            self.listWidget_thirdlevel_handle()
+                condition_list.append("module_id='" + module_id + "'")
+                module_id_thirdlevel = DBManager().query("thirdlevel", "module_id", condition_list)
+                thirdlevel_id = str(len(module_id_thirdlevel) + 1)
+                logger.debug(thirdlevel_id)
+                condition_list.clear()
+                if thirdlevel_element is not "":
+                    data_dict["thirdlevel_element"] = thirdlevel_element
+                data_dict["sublevel_id"] = sublevel_id
+                data_dict["module_id"] = module_id
+                data_dict["thirdlevel_id"] = thirdlevel_id
+                DBManager().insert_data("thirdlevel", data_dict)
+                self.textEdit_thirdlevel.clear()
+                self.listWidget_thirdlevel_handle()
         except:
             logger.exception("发现错误：")
 
@@ -303,8 +308,8 @@ class Ui_Form_Main(object):
             module = self.comboBox_module.currentText()
             condition_list = list()
             condition_list.clear()
-            condition_list.append("module='"+module+"'")
-            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_list)[0]
             condition_list.clear()
             condition_list.append("module_id='" + module_id + "'")
             while (listWidget_count != 0):
@@ -314,42 +319,57 @@ class Ui_Form_Main(object):
         except:
             logger.exception("发现错误：")
 
-    #
+    # 删除第三层元素选项
     def delete_thirdlevel(self):
         try:
-            condition_list=list()
-            module=self.comboBox_module.currentText()
+            condition_list = list()
+            module = self.comboBox_module.currentText()
             condition_list.clear()
-            condition_list.append("module='"+module+"'")
-            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_list)[0]
             condition_list.clear()
-            delete_data = self.listWidget_thirdlevel.currentItem().text()
-            thirdlevel_data = "thirdlevel_element='" + delete_data + "'"
-            logger.debug(thirdlevel_data)
-            condition_list.append(thirdlevel_data)
-            condition_list.append("module_id='"+str(module_id)+"'")
-            logger.debug(condition_list)
-            DBManager().delete("thirdlevel", condition_list)
-            self.listWidget_thirdlevel_handle()
+            try:
+                # 获取当前选中的对象list，currentItems是当前点过的选项而不是选中的
+                delete_data_object = self.listWidget_thirdlevel.selectedItems()
+                delete_data_list = list()
+                for i in delete_data_object:
+                    delete_data_list.append(i.text())
+            except:
+                delete_data_object = None
+            if delete_data_object is not None:
+                for i in delete_data_list:
+                    logger.debug(i)
+                    thirdlevel_data = "thirdlevel_element='" + i + "'"
+                    logger.debug(thirdlevel_data)
+                    condition_list.clear()
+                    condition_list.append(thirdlevel_data)
+                    condition_list.append("module_id='" + str(module_id) + "'")
+                    logger.debug(condition_list)
+                    DBManager().delete("thirdlevel", condition_list)
+                    self.listWidget_thirdlevel_handle()
         except:
             logger.exception("发现错误：")
 
     # 删除所选项方法
     def delete_selection(self):
         try:
-            condition_list=list()
-            module=self.comboBox_module.currentText()
+            condition_list = list()
+            module = self.comboBox_module.currentText()
             condition_list.clear()
-            condition_list.append("module='"+module+"'")
-            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.append("module='" + module + "'")
+            module_id = DBManager().query("modules", "module_id", condition_list)[0]
             condition_list.clear()
-            delete_data = self.listWidget_caseModel.currentItem().text()
-            thirdlevel_data = "thirdlevel_element='" + delete_data.split(":")[1] + "'"
-            condition_list.append(thirdlevel_data)
-            condition_list.append("module_id='"+str(module_id)+"'")
-            logger.debug(condition_list)
-            DBManager().delete("casemodel", condition_list)
-            self.listWidget_casemodel_handle()
+            try:
+                delete_data = self.listWidget_caseModel.currentItem().text()
+            except:
+                delete_data = ""
+            if delete_data is not "":
+                thirdlevel_data = "thirdlevel_element='" + delete_data.split(":")[1] + "'"
+                condition_list.append(thirdlevel_data)
+                condition_list.append("module_id='" + str(module_id) + "'")
+                logger.debug(condition_list)
+                DBManager().delete("casemodel", condition_list)
+                self.listWidget_casemodel_handle()
         except:
             logger.exception("发现错误：")
 
@@ -468,7 +488,3 @@ class DBManager(object):
         self.delete.select()
         self.delete.removeRows(0, 1)
         self.delete.submitAll()
-
-
-
-
