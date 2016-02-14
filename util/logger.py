@@ -34,5 +34,6 @@ else:
     f.close()
 
 # 读取配置文件并建立日志对象
+print(LOGGING_CONF_DIR)
 logging.config.fileConfig(LOGGING_CONF_DIR)
 logger = logging.getLogger()
