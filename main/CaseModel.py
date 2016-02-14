@@ -5,7 +5,6 @@
 # Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
-
 from util.logger import logger
 from PyQt5 import QtCore
 from PyQt5 import QtSql
@@ -31,6 +30,16 @@ class Ui_Form_Main(object):
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
+        #
+        self.label_thirdlevelPreview = QtWidgets.QLabel(Form)
+        self.label_thirdlevelPreview.setGeometry(QtCore.QRect(260, 50, 81, 20))
+        self.label_thirdlevelPreview.setObjectName("label_thirdlevelPreview")
+        self.textEdit_thirdlevel = QtWidgets.QTextEdit(Form)
+        self.textEdit_thirdlevel.setGeometry(QtCore.QRect(350, 20, 201, 91))
+        self.textEdit_thirdlevel.setObjectName("textEdit")
+        self.pushButton_addThirdlevel = QtWidgets.QPushButton(Form)
+        self.pushButton_addThirdlevel.setGeometry(QtCore.QRect(560, 80, 81, 31))
+        self.pushButton_addThirdlevel.setObjectName("pushButton_addThirdlevel")
         # toplevel
         self.label_toplevel = QtWidgets.QLabel(Form)
         self.label_toplevel.setGeometry(QtCore.QRect(10, 89, 61, 20))
@@ -59,6 +68,10 @@ class Ui_Form_Main(object):
         self.listWidget_thirdlevel.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.listWidget_thirdlevel.setObjectName("listWidget_thirdlevel")
         self.listWidget_thirdlevel_handle()
+        #
+        self.pushButton_deleteThirdlevel = QtWidgets.QPushButton(Form)
+        self.pushButton_deleteThirdlevel.setGeometry(QtCore.QRect(560, 260, 81, 31))
+        self.pushButton_deleteThirdlevel.setObjectName("pushButton_deleteThirdlevel")
         # casemodel
         self.label_caseModel = QtWidgets.QLabel(Form)
         self.label_caseModel.setGeometry(QtCore.QRect(13, 450, 61, 20))
@@ -91,7 +104,9 @@ class Ui_Form_Main(object):
         # 次层元素选择与选项联动事件
         self.listWidget_sublevel.itemSelectionChanged.connect(self.listWidget_thirdlevel_handle)
         # 重新设定按钮事件
+        self.pushButton_addThirdlevel.clicked.connect(self.add_thirdlevel)
         self.pushButton_resetAll.clicked.connect(self.clear_all)
+        self.pushButton_deleteThirdlevel.clicked.connect(self.delete_thirdlevel)
         self.pushButton_addToCaseModel.clicked.connect(self.add_to_casemodel)
         self.pushButton_deleteSelection.clicked.connect(self.delete_selection)
         self.pushButton_toExcel.clicked.connect(self.to_excel)
@@ -111,6 +126,9 @@ class Ui_Form_Main(object):
         self.pushButton_addToCaseModel.setText(_translate("Form", "添加"))
         self.pushButton_sublevel_help.setText(_translate("Form", "次层元素说明"))
         self.label_module.setText(_translate("Form", "模块"))
+        self.pushButton_addThirdlevel.setText(_translate("Form", "添加"))
+        self.pushButton_deleteThirdlevel.setText(_translate("Form", "删除选定"))
+        self.label_thirdlevelPreview.setText(_translate("Form", "预添加的选项"))
 
     # 顶层元素下拉框加载数据方法
     def comboBox_module_handle(self):
@@ -166,6 +184,39 @@ class Ui_Form_Main(object):
             sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
             for i in sublevel_element:
                 self.listWidget_thirdlevel.addItem(i)
+        except:
+            logger.exception("发现错误：")
+
+    #
+    def add_thirdlevel(self):
+        try:
+            data_dict = dict()
+            condition_list=list()
+            module=self.comboBox_module.currentText()
+            condition_list.clear()
+            condition_list.append("module='"+module+"'")
+            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            thirdlevel_element=self.textEdit_thirdlevel.toPlainText()
+            items_sublevel = self.listWidget_sublevel.selectedItems()
+            for i_sublevel in items_sublevel:
+                sublevel_element = i_sublevel.text()
+                condition_list.clear()
+                condition_list.append("sublevel_element='" + i_sublevel.text() + "'")
+                sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_list)[0]
+            condition_list.clear()
+            condition_list.append("module_id='"+module_id+"'")
+            module_id_thirdlevel=DBManager().query("thirdlevel","module_id",condition_list)
+            thirdlevel_id=str(len(module_id_thirdlevel)+1)
+            logger.debug(thirdlevel_id)
+            condition_list.clear()
+            if thirdlevel_element is not "":
+                data_dict["thirdlevel_element"]=thirdlevel_element
+            data_dict["sublevel_id"]=sublevel_id
+            data_dict["module_id"]=module_id
+            data_dict["thirdlevel_id"]=thirdlevel_id
+            DBManager().insert_data("thirdlevel",data_dict)
+            self.textEdit_thirdlevel.clear()
+            self.listWidget_thirdlevel_handle()
         except:
             logger.exception("发现错误：")
 
@@ -260,6 +311,26 @@ class Ui_Form_Main(object):
                 DBManager().delete("casemodel", condition_list)
                 listWidget_count = listWidget_count - 1
             self.listWidget_caseModel.clear()
+        except:
+            logger.exception("发现错误：")
+
+    #
+    def delete_thirdlevel(self):
+        try:
+            condition_list=list()
+            module=self.comboBox_module.currentText()
+            condition_list.clear()
+            condition_list.append("module='"+module+"'")
+            module_id=DBManager().query("modules","module_id",condition_list)[0]
+            condition_list.clear()
+            delete_data = self.listWidget_thirdlevel.currentItem().text()
+            thirdlevel_data = "thirdlevel_element='" + delete_data + "'"
+            logger.debug(thirdlevel_data)
+            condition_list.append(thirdlevel_data)
+            condition_list.append("module_id='"+str(module_id)+"'")
+            logger.debug(condition_list)
+            DBManager().delete("thirdlevel", condition_list)
+            self.listWidget_thirdlevel_handle()
         except:
             logger.exception("发现错误：")
 
@@ -397,4 +468,7 @@ class DBManager(object):
         self.delete.select()
         self.delete.removeRows(0, 1)
         self.delete.submitAll()
+
+
+
 
