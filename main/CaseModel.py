@@ -390,7 +390,7 @@ class Ui_Form_Main(object):
                 condition_list.clear()
                 condition_list.append("toplevel_id='" + str(i) + "'")
                 toplevel_count_list.append(len(DBManager().query("sublevel", "sublevel_elemnt", condition_list)))
-            TEMPLATE_FILE = "../templates/测试建模模板.xlsx"
+            TEMPLATE_FILE = "./templates/测试建模模板.xlsx"
             SHEET_COUNT = 4
             real_index_list = list()
             condition_list.clear()
