@@ -16,6 +16,7 @@ BASE_DIR = BASE_CURRENT_DIR
 if platform.system() == "Windows":
     BASE_DIR = BASE_CURRENT_DIR.replace("\\", "/")
 LOGGING_CONF_DIR = os.path.join(BASE_DIR + "/conf/", "logging.conf")
+print(LOGGING_CONF_DIR)
 LOGS_DIR = BASE_DIR + "/logs/"
 ALL_DIR = LOGS_DIR + "all.log"
 FILE_DIR = LOGS_DIR + "file.log"
