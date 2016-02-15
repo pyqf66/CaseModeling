@@ -21,7 +21,7 @@ class Ui_Form_Main(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(679, 589)
-        # module
+        # module   模块
         self.label_module = QtWidgets.QLabel(Form)
         self.label_module.setGeometry(QtCore.QRect(10, 29, 61, 20))
         self.label_module.setObjectName("label_module")
@@ -30,7 +30,7 @@ class Ui_Form_Main(object):
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
-        #
+        #thirdlevelPreview   预添加的选项
         self.label_thirdlevelPreview = QtWidgets.QLabel(Form)
         self.label_thirdlevelPreview.setGeometry(QtCore.QRect(260, 50, 81, 20))
         self.label_thirdlevelPreview.setObjectName("label_thirdlevelPreview")
@@ -40,7 +40,7 @@ class Ui_Form_Main(object):
         self.pushButton_addThirdlevel = QtWidgets.QPushButton(Form)
         self.pushButton_addThirdlevel.setGeometry(QtCore.QRect(560, 80, 81, 31))
         self.pushButton_addThirdlevel.setObjectName("pushButton_addThirdlevel")
-        # toplevel
+        # toplevel   顶层元素
         self.label_toplevel = QtWidgets.QLabel(Form)
         self.label_toplevel.setGeometry(QtCore.QRect(10, 89, 61, 20))
         self.label_toplevel.setObjectName("label_toplevel")
@@ -49,7 +49,7 @@ class Ui_Form_Main(object):
         self.comboBox_toplevel.setObjectName("comboBox_toplevel")
         self.comboBox_toplevel_handle()
         self.comboBox_toplevel_current_data = self.comboBox_toplevel.currentText()
-        # sublevel
+        # sublevel   次层元素
         self.label_sublevel = QtWidgets.QLabel(Form)
         self.label_sublevel.setGeometry(QtCore.QRect(13, 210, 61, 20))
         self.label_sublevel.setObjectName("label_sublevel")
@@ -58,7 +58,7 @@ class Ui_Form_Main(object):
         self.listWidget_sublevel.setObjectName("listWidget_sublevel")
         # 默认选中第一个
         self.listWidget_sublevel_handle(self.comboBox_toplevel_current_data)
-        # thirdlevel
+        # thirdlevel  选项
         self.label_thirdlevel = QtWidgets.QLabel(Form)
         self.label_thirdlevel.setGeometry(QtCore.QRect(300, 218, 41, 20))
         self.label_thirdlevel.setObjectName("label_thirdlevel")
@@ -68,11 +68,11 @@ class Ui_Form_Main(object):
         self.listWidget_thirdlevel.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.listWidget_thirdlevel.setObjectName("listWidget_thirdlevel")
         self.listWidget_thirdlevel_handle()
-        #
+        # deleteThirdlevel  删除选定
         self.pushButton_deleteThirdlevel = QtWidgets.QPushButton(Form)
         self.pushButton_deleteThirdlevel.setGeometry(QtCore.QRect(560, 260, 81, 31))
         self.pushButton_deleteThirdlevel.setObjectName("pushButton_deleteThirdlevel")
-        # casemodel
+        # casemodel  已设定项
         self.label_caseModel = QtWidgets.QLabel(Form)
         self.label_caseModel.setGeometry(QtCore.QRect(13, 450, 61, 20))
         self.label_caseModel.setObjectName("label_caseModel")
@@ -80,17 +80,23 @@ class Ui_Form_Main(object):
         self.listWidget_caseModel.setGeometry(QtCore.QRect(90, 368, 261, 192))
         self.listWidget_caseModel.setObjectName("listWidget_caseModel")
         self.listWidget_casemodel_handle()
-        # button
+        # button  删除选定
         self.pushButton_deleteSelection = QtWidgets.QPushButton(Form)
         self.pushButton_deleteSelection.setGeometry(QtCore.QRect(380, 530, 81, 31))
         self.pushButton_deleteSelection.setObjectName("pushButton_deleteSelection")
         self.pushButton_toExcel = QtWidgets.QPushButton(Form)
+
+        # button 导出excel
         self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 488, 101, 31))
         self.pushButton_toExcel.setObjectName("pushButton_toExcel")
         self.pushButton_resetAll = QtWidgets.QPushButton(Form)
+
+        # button 重新设定
         self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 528, 101, 31))
         self.pushButton_resetAll.setObjectName("pushButton_resetAll")
         self.pushButton_addToCaseModel = QtWidgets.QPushButton(Form)
+
+        # button 添加
         self.pushButton_addToCaseModel.setGeometry(QtCore.QRect(560, 300, 81, 31))
         self.pushButton_addToCaseModel.setObjectName("pushButton_addToCaseModel")
         self.pushButton_sublevel_help = QtWidgets.QPushButton(Form)
@@ -113,6 +119,7 @@ class Ui_Form_Main(object):
         self.pushButton_sublevel_help.clicked.connect(self.sublevel_help)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+#页面显示文本
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "测试建模工具"))
@@ -149,6 +156,10 @@ class Ui_Form_Main(object):
 
     # 次层元素加载数据方法
     def listWidget_sublevel_handle(self, comboBox_current_data):
+        '''
+        :param comboBox_current_data:数据库查询条件
+        :return:
+        '''
         try:
             self.listWidget_sublevel.clear()
             condition_List = list()
@@ -463,20 +474,7 @@ class DBManager(object):
         self.insert.insertRecord(row_count, model)
         self.insert.submitAll()
 
-    # # 删除所有数据
-    # def clear_all(self, table, condition_list=None):
-    #     self.clearer = QtSql.QSqlTableModel()
-    #     self.clearer.setTable(table)
-    #     if condition_list is not None:
-    #         condition = " and ".join(condition_list)
-    #         self.clearer.setFilter(condition)
-    #     # 查询出数据后才能成功执行后续的命令
-    #     self.clearer.select()
-    #     try:
-    #         self.clearer.removeRows(0, 1)
-    #         self.clearer.submitAll()
-    #     except:
-    #         logger.exception("发现错误")
+
 
     # 删除数据
     def delete(self, table, condition_list=None):
