@@ -7,9 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 from util.logger import logger
 from PyQt5 import QtCore
-from PyQt5 import QtSql
 from PyQt5 import QtWidgets
-from main.SublevelHelp import Ui_Form_Help
+from main.DBManager import DBManager
 
 from util.OutputWithTemplate import OutputWithTemplate
 import sys
@@ -116,7 +115,6 @@ class Ui_Form_Main(object):
         self.pushButton_addToCaseModel.clicked.connect(self.add_to_casemodel)
         self.pushButton_deleteSelection.clicked.connect(self.delete_selection)
         self.pushButton_toExcel.clicked.connect(self.to_excel)
-        self.pushButton_sublevel_help.clicked.connect(self.sublevel_help)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     # 页面显示文本
@@ -428,59 +426,5 @@ class Ui_Form_Main(object):
         except:
             logger.exception("发现错误:")
 
-    # 打开次层元素帮助方法
-    def sublevel_help(self):
-        try:
-            self.help_widget = QtWidgets.QWidget()
-            self.window_help = Ui_Form_Help()
-            self.window_help.setupUi(self.help_widget)
-        except:
-            logger.exception("发现错误:")
 
 
-class DBManager(object):
-    def __init__(self):
-        # 选择数据库类型，这里为sqlite3数据库
-        self.db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
-        # 创建数据库test0.db,如果存在则打开，否则创建该数据库
-        self.db.setDatabaseName("casemodel")
-        # 打开数据库
-        self.db.open()
-
-    # 查询数据
-    def query(self, table, value, condition_list=None):
-        # 查询，其中condition是个list
-        self.query = QtSql.QSqlTableModel()
-        self.query.setTable(table)
-        if condition_list is not None:
-            condition = " and ".join(condition_list)
-            self.query.setFilter(condition)
-        self.query.select()
-        result_list = list()
-        row_count = self.query.rowCount()
-        for i in range(row_count):
-            result_list.append(self.query.record(i).value(value))
-        return result_list
-
-    # 插入数据，数据索引从0开始
-    def insert_data(self, table, data_dict):
-        self.insert = QtSql.QSqlTableModel()
-        self.insert.setTable(table)
-        self.insert.select()
-        row_count = self.insert.rowCount()
-        model = self.insert.record()
-        for i in data_dict:
-            model.setValue(i, data_dict[i])
-        self.insert.insertRecord(row_count, model)
-        self.insert.submitAll()
-
-    # 删除数据
-    def delete(self, table, condition_list=None):
-        self.delete = QtSql.QSqlTableModel()
-        self.delete.setTable(table)
-        if condition_list is not None:
-            condition = " and ".join(condition_list)
-            self.delete.setFilter(condition)
-        self.delete.select()
-        self.delete.removeRows(0, 1)
-        self.delete.submitAll()
