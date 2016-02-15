@@ -30,7 +30,7 @@ class Ui_Form_Main(object):
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
-        #thirdlevelPreview   预添加的选项
+        # thirdlevelPreview   预添加的选项
         self.label_thirdlevelPreview = QtWidgets.QLabel(Form)
         self.label_thirdlevelPreview.setGeometry(QtCore.QRect(260, 50, 81, 20))
         self.label_thirdlevelPreview.setObjectName("label_thirdlevelPreview")
@@ -119,7 +119,7 @@ class Ui_Form_Main(object):
         self.pushButton_sublevel_help.clicked.connect(self.sublevel_help)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-#页面显示文本
+    # 页面显示文本
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "测试建模工具"))
@@ -473,8 +473,6 @@ class DBManager(object):
             model.setValue(i, data_dict[i])
         self.insert.insertRecord(row_count, model)
         self.insert.submitAll()
-
-
 
     # 删除数据
     def delete(self, table, condition_list=None):
