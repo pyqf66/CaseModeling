@@ -235,7 +235,7 @@
     <string>预添加的选项</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QTextEdit" name="textEdit_thirdlevel">
    <property name="geometry">
     <rect>
      <x>350</x>
@@ -243,6 +243,19 @@
      <width>201</width>
      <height>91</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_edit">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>20</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>编辑</string>
    </property>
   </widget>
  </widget>

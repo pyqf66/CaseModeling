@@ -29,6 +29,12 @@ class Ui_Form_Main(object):
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
+
+        # pushbutton 编辑模块按钮
+        self.pushButton_edit = QtWidgets.QPushButton(Form)
+        self.pushButton_edit.setGeometry(QtCore.QRect(190, 20, 81, 31))
+        self.pushButton_edit.setObjectName("pushButton_edit")
+
         # thirdlevelPreview   预添加的选项
         self.label_thirdlevelPreview = QtWidgets.QLabel(Form)
         self.label_thirdlevelPreview.setGeometry(QtCore.QRect(260, 50, 81, 20))
@@ -134,6 +140,7 @@ class Ui_Form_Main(object):
         self.pushButton_addThirdlevel.setText(_translate("Form", "添加"))
         self.pushButton_deleteThirdlevel.setText(_translate("Form", "删除选定"))
         self.label_thirdlevelPreview.setText(_translate("Form", "预添加的选项"))
+        self.pushButton_edit.setText(_translate("Form", "编辑"))
 
     # 顶层元素下拉框加载数据方法
     def comboBox_module_handle(self):
@@ -179,20 +186,21 @@ class Ui_Form_Main(object):
             self.listWidget_thirdlevel.clear()
             condition_List = list()
             module = self.comboBox_module.currentText()
-            condition_List.clear()
-            condition_List.append("module='" + module + "'")
-            module_id = DBManager().query("modules", "module_id", condition_List)[0]
-            thirdlevel_widget = self.listWidget_sublevel.currentItem()
-            row_data = thirdlevel_widget.text()
-            condition_List.clear()
-            condition_List.append("sublevel_element='" + row_data + "'")
-            sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)
-            condition_List.clear()
-            condition_List.append("sublevel_id='" + sublevel_id[0] + "'")
-            condition_List.append("module_id='" + str(module_id) + "'")
-            sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
-            for i in sublevel_element:
-                self.listWidget_thirdlevel.addItem(i)
+            if module is not "":
+                condition_List.clear()
+                condition_List.append("module='" + module + "'")
+                module_id = DBManager().query("modules", "module_id", condition_List)[0]
+                thirdlevel_widget = self.listWidget_sublevel.currentItem()
+                row_data = thirdlevel_widget.text()
+                condition_List.clear()
+                condition_List.append("sublevel_element='" + row_data + "'")
+                sublevel_id = DBManager().query("sublevel", "sublevel_id", condition_List)
+                condition_List.clear()
+                condition_List.append("sublevel_id='" + sublevel_id[0] + "'")
+                condition_List.append("module_id='" + str(module_id) + "'")
+                sublevel_element = DBManager().query("thirdlevel", "thirdlevel_element", condition_List)
+                for i in sublevel_element:
+                    self.listWidget_thirdlevel.addItem(i)
         except:
             logger.exception("发现错误：")
 
@@ -240,24 +248,25 @@ class Ui_Form_Main(object):
             self.listWidget_caseModel.clear()
             condition_List = list()
             module = self.comboBox_module.currentText()
-            condition_List.clear()
-            condition_List.append("module='" + module + "'")
-            module_id = DBManager().query("modules", "module_id", condition_List)[0]
-            condition_List.clear()
-            condition_List.append("module_id='" + str(module_id) + "'")
-            logger.debug("=====================================================================")
-            logger.debug(condition_List)
-            toplevel_element_list = DBManager().query("casemodel", "toplevel_element", condition_List)
-            logger.debug(toplevel_element_list)
-            sublevel_element_list = DBManager().query("casemodel", "sublevel_element", condition_List)
-            thirdlevel_element_list = DBManager().query("casemodel", "thirdlevel_element", condition_List)
-            casemodel_list = list()
-            for j in range(len(toplevel_element_list)):
-                casemodel_list.append(
-                    toplevel_element_list[j] + "-" + sublevel_element_list[j] + ":" + thirdlevel_element_list[j])
-            logger.debug(casemodel_list)
-            for k in casemodel_list:
-                self.listWidget_caseModel.addItem(k)
+            if module is not "":
+                condition_List.clear()
+                condition_List.append("module='" + module + "'")
+                module_id = DBManager().query("modules", "module_id", condition_List)[0]
+                condition_List.clear()
+                condition_List.append("module_id='" + str(module_id) + "'")
+                logger.debug("=====================================================================")
+                logger.debug(condition_List)
+                toplevel_element_list = DBManager().query("casemodel", "toplevel_element", condition_List)
+                logger.debug(toplevel_element_list)
+                sublevel_element_list = DBManager().query("casemodel", "sublevel_element", condition_List)
+                thirdlevel_element_list = DBManager().query("casemodel", "thirdlevel_element", condition_List)
+                casemodel_list = list()
+                for j in range(len(toplevel_element_list)):
+                    casemodel_list.append(
+                        toplevel_element_list[j] + "-" + sublevel_element_list[j] + ":" + thirdlevel_element_list[j])
+                logger.debug(casemodel_list)
+                for k in casemodel_list:
+                    self.listWidget_caseModel.addItem(k)
         except:
             logger.exception("发现错误：")
 
