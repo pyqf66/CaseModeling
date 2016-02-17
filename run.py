@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
+
 sys.path.append("../")
 
 from PyQt5 import QtWidgets
-
 from main.CaseModel import Ui_Form_Main
 from main.SublevelHelp import Ui_Form_Help
 from main.EditModule import Ui_Form_EditModule
@@ -40,7 +40,7 @@ class Run(QtWidgets.QWidget):
         except:
             logger.exception("发现错误:")
 
-    #模块编辑
+    # 模块编辑
     def edit_module(self):
         try:
             self.edit_widget = QtWidgets.QWidget()
@@ -48,36 +48,36 @@ class Run(QtWidgets.QWidget):
             self.ui_edit_module.setupUi(self.edit_widget)
             # 添加模块
             self.ui_edit_module.pushButton_add_module.clicked.connect(self.add_modules)
-            #删除模块
+            # 删除模块
             self.ui_edit_module.pushButton_delete_module.clicked.connect(self.del_modules)
         except:
             logger.exception("加载编辑页面错误：")
 
-    #添加模块函数
+    # 添加模块函数
     def add_modules(self):
-        #添加模块数据
+        # 添加模块数据
         self.ui_edit_module.add_to_module()
-        #清空主页面模块数据
+        # 清空主页面模块数据
         self.ui.comboBox_module.clear()
-        #查询主页面模块数据并显示
+        # 查询主页面模块数据并显示
         self.ui.comboBox_module_handle()
 
-    #删除模块函数
+    # 删除模块函数
     def del_modules(self):
-        #删除模块数据
+        # 删除模块数据
         self.ui_edit_module.delete_module()
-        #清空主页面模块数据
+        # 清空主页面模块数据
         self.ui.comboBox_module.clear()
-        #查询主页面模块数据并显示
+        # 查询主页面模块数据并显示
         self.ui.comboBox_module_handle()
-        #清空主页面已设定项
+        # 清空主页面已设定项
         self.ui.listWidget_caseModel.clear()
-        #查询主页面已设定项
+        # 查询主页面已设定项
         self.ui.listWidget_casemodel_handle()
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = Run()
     window.show()
     sys.exit(app.exec_())
-

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtSql
+
+
 class DBManager(object):
     def __init__(self):
         # 选择数据库类型，这里为sqlite3数据库

@@ -10,6 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from main.DBManager import DBManager
 from  util.logger import logger
 
+
 class Ui_Form_EditModule(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -28,12 +29,12 @@ class Ui_Form_EditModule(object):
         self.textEdit_module.setObjectName("textEdit_module")
         # 默认选中第一个
         self.listWidget_module_handle()
-
-
+        # PyQt处理图形
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
         Form.show()
 
+    # 页面显示文本
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "模块编辑"))
@@ -42,13 +43,12 @@ class Ui_Form_EditModule(object):
 
     # 模块加载数据方法
     def listWidget_module_handle(self):
-
         try:
             self.listWidget_module.clear()
             module_element = DBManager().query("modules", "module")
             for i in module_element:
                 self.listWidget_module.addItem(i)
-                logger.debug("加载数据成功："+i)
+                logger.debug("加载数据成功：" + i)
             self.listWidget_module.setCurrentRow(0)
         except:
             logger.exception("查询模块数据错误：")
@@ -58,28 +58,28 @@ class Ui_Form_EditModule(object):
         modules = self.textEdit_module.toPlainText()
         module_element = DBManager().query("modules", "module")
         if ":" in modules or "：" in modules or "-" in modules:
-                msg_box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "不允许输入冒号或横线！")
-                msg_box.exec_()
-                self.textEdit_module.clear()
-        elif(modules in module_element):
+            msg_box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "不允许输入冒号或横线！")
+            msg_box.exec_()
+            self.textEdit_module.clear()
+        elif (modules in module_element):
             msg_box_repetition = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "模块名称重复！")
             msg_box_repetition.exec_()
             self.textEdit_module.clear()
         else:
             module_dict = dict()
             module_id = max(list(DBManager().query("modules", "module_id")))
-            logger.debug("模块当前最大id为："+module_id)
+            logger.debug("模块当前最大id为：" + module_id)
             try:
                 module_dict["module"] = modules
-                module_dict["module_id"] = int(module_id)+1
-                DBManager().insert_data("modules",module_dict)
-                logger.debug("插入模块数据成功：modules ="+modules + ",module_id ="+ str((int(module_id)+1)))
+                module_dict["module_id"] = int(module_id) + 1
+                DBManager().insert_data("modules", module_dict)
+                logger.debug("插入模块数据成功：modules =" + modules + ",module_id =" + str((int(module_id) + 1)))
                 self.listWidget_module_handle()
                 self.textEdit_module.clear()
             except:
                 logger.exception("模块数据插入错误")
 
-    #删除模块方法
+    # 删除模块方法
     def delete_module(self):
         try:
             condition_List_module = list()
@@ -90,14 +90,13 @@ class Ui_Form_EditModule(object):
                 condition_List_module_id.clear()
                 condition_List_module.append("module='" + i.text() + "'")
                 module_id = DBManager().query("modules", "module_id", condition_List_module)[0]
-                DBManager().delete("modules",condition_List_module)
-                logger.debug("modules表，删除数据成功："+i.text())
+                DBManager().delete("modules", condition_List_module)
+                logger.debug("modules表，删除数据成功：" + i.text())
                 condition_List_module_id.append("module_id='" + module_id + "'")
-                DBManager().delete("casemodel",condition_List_module_id)
-                logger.debug("casemodel表，删除数据成功,删除id为："+ module_id)
-
-                DBManager().delete("thirdlevel",condition_List_module_id)
-                logger.debug("thirdlevel表，删除数据成功,删除id为："+ module_id)
+                DBManager().delete("casemodel", condition_List_module_id)
+                logger.debug("casemodel表，删除数据成功,删除id为：" + module_id)
+                DBManager().delete("thirdlevel", condition_List_module_id)
+                logger.debug("thirdlevel表，删除数据成功,删除id为：" + module_id)
             self.listWidget_module_handle()
         except:
             logger.exception("删除数据错误:")

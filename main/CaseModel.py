@@ -29,12 +29,10 @@ class Ui_Form_Main(object):
         self.comboBox_module.setObjectName("comboBox_module")
         self.comboBox_module_handle()
         self.comboBox_module_current_data = self.comboBox_module.currentText()
-
         # pushbutton 编辑模块按钮
         self.pushButton_edit = QtWidgets.QPushButton(Form)
         self.pushButton_edit.setGeometry(QtCore.QRect(190, 20, 81, 31))
         self.pushButton_edit.setObjectName("pushButton_edit")
-
         # thirdlevelPreview   预添加的选项
         self.label_thirdlevelPreview = QtWidgets.QLabel(Form)
         self.label_thirdlevelPreview.setGeometry(QtCore.QRect(260, 50, 81, 20))
@@ -90,23 +88,21 @@ class Ui_Form_Main(object):
         self.pushButton_deleteSelection.setGeometry(QtCore.QRect(380, 530, 81, 31))
         self.pushButton_deleteSelection.setObjectName("pushButton_deleteSelection")
         self.pushButton_toExcel = QtWidgets.QPushButton(Form)
-
         # button 导出excel
         self.pushButton_toExcel.setGeometry(QtCore.QRect(560, 488, 101, 31))
         self.pushButton_toExcel.setObjectName("pushButton_toExcel")
         self.pushButton_resetAll = QtWidgets.QPushButton(Form)
-
         # button 重新设定
         self.pushButton_resetAll.setGeometry(QtCore.QRect(560, 528, 101, 31))
         self.pushButton_resetAll.setObjectName("pushButton_resetAll")
         self.pushButton_addToCaseModel = QtWidgets.QPushButton(Form)
-
         # button 添加
         self.pushButton_addToCaseModel.setGeometry(QtCore.QRect(560, 300, 81, 31))
         self.pushButton_addToCaseModel.setObjectName("pushButton_addToCaseModel")
         self.pushButton_sublevel_help = QtWidgets.QPushButton(Form)
         self.pushButton_sublevel_help.setGeometry(QtCore.QRect(560, 448, 101, 31))
         self.pushButton_sublevel_help.setObjectName("pushButton_sublevel_help")
+        # PyQt处理图形
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -421,6 +417,3 @@ class Ui_Form_Main(object):
             OutputWithTemplate().output_with_excel(TEMPLATE_FILE, SHEET_COUNT, data_list)
         except:
             logger.exception("发现错误:")
-
-
-
