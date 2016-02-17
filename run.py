@@ -17,6 +17,19 @@ class Run(QtWidgets.QWidget):
         self.ui.setupUi(self)
         self.ui.pushButton_sublevel_help.clicked.connect(self.sublevel_help)
         self.ui.pushButton_edit.clicked.connect(self.edit_module)
+        # 下拉框变更事件
+        self.ui.comboBox_module.currentTextChanged.connect(self.ui.comboBox_module_change_handle)
+        # 下拉框变更事件
+        self.ui.comboBox_toplevel.currentTextChanged.connect(self.ui.listWidget_sublevel_handle)
+        # 次层元素选择与选项联动事件
+        self.ui.listWidget_sublevel.itemSelectionChanged.connect(self.ui.listWidget_thirdlevel_handle)
+        # 重新设定按钮事件
+        self.ui.pushButton_addThirdlevel.clicked.connect(self.ui.add_thirdlevel)
+        self.ui.pushButton_resetAll.clicked.connect(self.ui.clear_all)
+        self.ui.pushButton_deleteThirdlevel.clicked.connect(self.ui.delete_thirdlevel)
+        self.ui.pushButton_addToCaseModel.clicked.connect(self.ui.add_to_casemodel)
+        self.ui.pushButton_deleteSelection.clicked.connect(self.ui.delete_selection)
+        self.ui.pushButton_toExcel.clicked.connect(self.ui.to_excel)
 
     # 打开次层元素帮助方法
     def sublevel_help(self):

@@ -108,19 +108,6 @@ class Ui_Form_Main(object):
         self.pushButton_sublevel_help.setGeometry(QtCore.QRect(560, 448, 101, 31))
         self.pushButton_sublevel_help.setObjectName("pushButton_sublevel_help")
         self.retranslateUi(Form)
-        # 下拉框变更事件
-        self.comboBox_module.currentTextChanged.connect(self.comboBox_module_change_handle)
-        # 下拉框变更事件
-        self.comboBox_toplevel.currentTextChanged.connect(self.listWidget_sublevel_handle)
-        # 次层元素选择与选项联动事件
-        self.listWidget_sublevel.itemSelectionChanged.connect(self.listWidget_thirdlevel_handle)
-        # 重新设定按钮事件
-        self.pushButton_addThirdlevel.clicked.connect(self.add_thirdlevel)
-        self.pushButton_resetAll.clicked.connect(self.clear_all)
-        self.pushButton_deleteThirdlevel.clicked.connect(self.delete_thirdlevel)
-        self.pushButton_addToCaseModel.clicked.connect(self.add_to_casemodel)
-        self.pushButton_deleteSelection.clicked.connect(self.delete_selection)
-        self.pushButton_toExcel.clicked.connect(self.to_excel)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     # 页面显示文本
