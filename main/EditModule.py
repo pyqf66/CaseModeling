@@ -67,19 +67,19 @@ class Ui_Form_EditModule(object):
             self.textEdit_module.clear()
         else:
             module_dict = dict()
-            module_len = len(DBManager().query("modules", "module"))
-
+            module_id = max(list(DBManager().query("modules", "module_id")))
+            logger.debug("模块当前最大id为："+module_id)
             try:
                 module_dict["module"] = modules
-                module_dict["module_id"] = module_len+1
+                module_dict["module_id"] = int(module_id)+1
                 DBManager().insert_data("modules",module_dict)
-                logger.debug("插入模块数据成功："+modules)
+                logger.debug("插入模块数据成功：modules ="+modules + ",module_id ="+ str((int(module_id)+1)))
                 self.listWidget_module_handle()
                 self.textEdit_module.clear()
             except:
                 logger.exception("模块数据插入错误")
 
-    #珊瑚模块方法
+    #删除模块方法
     def delete_module(self):
         try:
             condition_List = list()
