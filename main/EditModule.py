@@ -48,6 +48,7 @@ class Ui_Form_EditModule(object):
             module_element = DBManager().query("modules", "module")
             for i in module_element:
                 self.listWidget_module.addItem(i)
+                logger.debug("加载数据成功："+i)
             self.listWidget_module.setCurrentRow(0)
         except:
             logger.exception("查询模块数据错误：")
@@ -67,12 +68,12 @@ class Ui_Form_EditModule(object):
         else:
             module_dict = dict()
             module_len = len(DBManager().query("modules", "module"))
-            print(module_len)
 
             try:
                 module_dict["module"] = modules
                 module_dict["module_id"] = module_len+1
                 DBManager().insert_data("modules",module_dict)
+                logger.debug("插入模块数据成功："+modules)
                 self.listWidget_module_handle()
                 self.textEdit_module.clear()
             except:
@@ -84,10 +85,10 @@ class Ui_Form_EditModule(object):
             condition_List = list()
             delete_modules = self.listWidget_module.selectedItems()
             for i in delete_modules:
-                print(i.text())
                 condition_List.clear()
                 condition_List.append("module='" + i.text() + "'")
                 DBManager().delete("modules",condition_List)
+                logger.debug("删除数据成功："+i.text())
             self.listWidget_module_handle()
         except:
             logger.exception("删除数据错误:")
