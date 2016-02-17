@@ -82,13 +82,22 @@ class Ui_Form_EditModule(object):
     #删除模块方法
     def delete_module(self):
         try:
-            condition_List = list()
+            condition_List_module = list()
+            condition_List_module_id = list()
             delete_modules = self.listWidget_module.selectedItems()
             for i in delete_modules:
-                condition_List.clear()
-                condition_List.append("module='" + i.text() + "'")
-                DBManager().delete("modules",condition_List)
-                logger.debug("删除数据成功："+i.text())
+                condition_List_module.clear()
+                condition_List_module_id.clear()
+                condition_List_module.append("module='" + i.text() + "'")
+                module_id = DBManager().query("modules", "module_id", condition_List_module)[0]
+                DBManager().delete("modules",condition_List_module)
+                logger.debug("modules表，删除数据成功："+i.text())
+                condition_List_module_id.append("module_id='" + module_id + "'")
+                DBManager().delete("casemodel",condition_List_module_id)
+                logger.debug("casemodel表，删除数据成功,删除id为："+ module_id)
+
+                DBManager().delete("thirdlevel",condition_List_module_id)
+                logger.debug("thirdlevel表，删除数据成功,删除id为："+ module_id)
             self.listWidget_module_handle()
         except:
             logger.exception("删除数据错误:")

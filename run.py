@@ -70,7 +70,10 @@ class Run(QtWidgets.QWidget):
         self.ui.comboBox_module.clear()
         #查询主页面模块数据并显示
         self.ui.comboBox_module_handle()
-
+        #清空主页面已设定项
+        self.ui.listWidget_caseModel.clear()
+        #查询主页面已设定项
+        self.ui.listWidget_casemodel_handle()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
