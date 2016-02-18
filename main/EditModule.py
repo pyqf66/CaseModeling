@@ -55,29 +55,36 @@ class Ui_Form_EditModule(object):
 
     # 添加模块数据方法
     def add_to_module(self):
-        modules = self.textEdit_module.toPlainText()
-        module_element = DBManager().query("modules", "module")
-        if ":" in modules or "：" in modules or "-" in modules:
-            msg_box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "不允许输入冒号或横线！")
-            msg_box.exec_()
-            self.textEdit_module.clear()
-        elif (modules in module_element):
-            msg_box_repetition = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "模块名称重复！")
-            msg_box_repetition.exec_()
-            self.textEdit_module.clear()
-        else:
-            module_dict = dict()
-            module_id = max(list(DBManager().query("modules", "module_id")))
-            logger.debug("模块当前最大id为：" + module_id)
-            try:
-                module_dict["module"] = modules
-                module_dict["module_id"] = int(module_id) + 1
-                DBManager().insert_data("modules", module_dict)
-                logger.debug("插入模块数据成功：modules =" + modules + ",module_id =" + str((int(module_id) + 1)))
-                self.listWidget_module_handle()
+        try:
+            modules = self.textEdit_module.toPlainText()
+            module_element = DBManager().query("modules", "module")
+            if ":" in modules or "：" in modules or "-" in modules:
+                msg_box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "不允许输入冒号或横线！")
+                msg_box.exec_()
                 self.textEdit_module.clear()
-            except:
-                logger.exception("模块数据插入错误")
+            elif (modules in module_element):
+                msg_box_repetition = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Warning, "错误输入提示", "模块名称重复！")
+                msg_box_repetition.exec_()
+                self.textEdit_module.clear()
+            else:
+                module_dict = dict()
+                module_id_list = list(DBManager().query("modules", "module_id"))
+                if len(module_id_list) == 0:
+                    module_id = str(1)
+                else:
+                    module_id = str(int(max(module_id_list)) + 1)
+                logger.debug("模块当前最大id为：" + module_id)
+                try:
+                    module_dict["module"] = modules
+                    module_dict["module_id"] = module_id
+                    DBManager().insert_data("modules", module_dict)
+                    logger.debug("插入模块数据成功：modules =" + modules + ",module_id =" + str((int(module_id) + 1)))
+                    self.listWidget_module_handle()
+                    self.textEdit_module.clear()
+                except:
+                    logger.exception("模块数据插入错误")
+        except:
+            logger.exception("发现错误：")
 
     # 删除模块方法
     def delete_module(self):

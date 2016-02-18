@@ -211,7 +211,10 @@ class Ui_Form_Main(object):
                 condition_list.clear()
                 condition_list.append("module_id='" + module_id + "'")
                 module_id_thirdlevel = DBManager().query("thirdlevel", "thirdlevel_id", condition_list)
-                thirdlevel_id = int(max(list(module_id_thirdlevel))) + 1
+                if len(module_id_thirdlevel) == 0:
+                    thirdlevel_id = str(1)
+                else:
+                    thirdlevel_id = str(int(max(module_id_thirdlevel)) + 1)
                 logger.debug(thirdlevel_id)
                 condition_list.clear()
                 if thirdlevel_element is not "":
