@@ -69,10 +69,13 @@ class Ui_Form_EditModule(object):
             else:
                 module_dict = dict()
                 module_id_list = list(DBManager().query("modules", "module_id"))
+                moduel_id_list_toint = list()
+                for i in module_id_list:
+                    moduel_id_list_toint.append(int(i))
                 if len(module_id_list) == 0:
                     module_id = str(1)
                 else:
-                    module_id = str(int(max(module_id_list)) + 1)
+                    module_id = str(max(moduel_id_list_toint) + 1)
                 logger.debug("模块当前最大id为：" + module_id)
                 try:
                     module_dict["module"] = modules

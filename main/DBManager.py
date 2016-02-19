@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtSql
+from util.logger import logger
 
 
 class DBManager(object):
@@ -46,5 +47,13 @@ class DBManager(object):
             condition = " and ".join(condition_list)
             self.delete.setFilter(condition)
         self.delete.select()
-        self.delete.removeRows(0, 1)
+        count = self.delete.rowCount()
+        logger.debug("删除行数：" + str(count))
+        # while (counts > 0):
+        #     self.delete.removeRows(0, counts)
+        #     counts = counts - 1
+        # logger.debug("counts=" + str(counts))
+        while (count >= 0):
+            self.delete.removeRow(count)
+            count = count - 1
         self.delete.submitAll()
