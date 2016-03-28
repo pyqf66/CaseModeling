@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="dataSourceStorageLocal">
-    <data-source name="Sqlite (Xerial) - identifier.sqlite" uuid="943dd8af-a6a7-4a22-9943-c31326a3efb9" />
-    <data-source name="Sqlite (Xerial) - casemodel" uuid="1e7b8b1a-3d26-49d3-bad9-35ee4b83eb3b" />
-  </component>
-</project>
